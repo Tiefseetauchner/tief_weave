@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:tief_weave/renderr/markdown_renderer.dart';
+import 'package:tief_weave/render/markdown_renderer.dart';
 import 'package:tief_weave/parser/markdown_ast_builder.dart';
 import 'package:tief_weave/token/markdown_tokenizer.dart';
 
@@ -17,6 +17,7 @@ class Markdown extends StatelessWidget {
   final TextWidthBasis? textWidthBasis;
   final TextHeightBehavior? textHeightBehavior;
   final Color? selectionColor;
+  final double? width;
 
   const Markdown(
     this.text, {
@@ -33,6 +34,7 @@ class Markdown extends StatelessWidget {
     this.textWidthBasis,
     this.textHeightBehavior,
     this.selectionColor,
+    this.width,
   });
 
   @override
@@ -51,6 +53,7 @@ class Markdown extends StatelessWidget {
       textWidthBasis: textWidthBasis,
       textHeightBehavior: textHeightBehavior,
       selectionColor: selectionColor,
+      width: width,
     );
   }
 }

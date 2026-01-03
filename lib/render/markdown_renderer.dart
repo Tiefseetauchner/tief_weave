@@ -15,6 +15,7 @@ class MarkdownRenderer extends StatelessWidget {
   final TextWidthBasis? textWidthBasis;
   final TextHeightBehavior? textHeightBehavior;
   final Color? selectionColor;
+  final double? width;
 
   const MarkdownRenderer(
     this.ast, {
@@ -31,6 +32,7 @@ class MarkdownRenderer extends StatelessWidget {
     this.textWidthBasis,
     this.textHeightBehavior,
     this.selectionColor,
+    this.width,
   });
 
   @override
@@ -38,8 +40,8 @@ class MarkdownRenderer extends StatelessWidget {
     final builtTree = _buildWidgetTreeFromAst(ast);
 
     return Column(
-      mainAxisAlignment: _mainAxisAlignmentFromTextAlign(textAlign),
       spacing: 12,
+      mainAxisSize: MainAxisSize.max,
       children: builtTree,
     );
   }
@@ -63,21 +65,6 @@ class MarkdownRenderer extends StatelessWidget {
     }
   }
 
-  MainAxisAlignment _mainAxisAlignmentFromTextAlign(TextAlign? textAlign) {
-    switch (textAlign) {
-      case TextAlign.center:
-        return MainAxisAlignment.center;
-      case TextAlign.end:
-      case TextAlign.right:
-        return MainAxisAlignment.end;
-      case TextAlign.start:
-      case TextAlign.left:
-      case TextAlign.justify:
-      case null:
-        return MainAxisAlignment.start;
-    }
-  }
-
   Widget _renderParagraph(List<Inline> inlines) {
     return _renderInlines(inlines);
   }
@@ -95,22 +82,25 @@ class MarkdownRenderer extends StatelessWidget {
     TextScaler? scaler,
     TextStyle? overrideStyle,
   }) {
-    return Text.rich(
-      TextSpan(
-        style: style?.merge(overrideStyle),
-        children: _renderInlineSpans(inlines, style),
+    return SizedBox(
+      width: width,
+      child: Text.rich(
+        TextSpan(
+          style: style?.merge(overrideStyle),
+          children: _renderInlineSpans(inlines, style),
+        ),
+        strutStyle: strutStyle,
+        textAlign: textAlign,
+        textDirection: textDirection,
+        locale: locale,
+        softWrap: softWrap,
+        overflow: overflow,
+        textScaler: scaler ?? textScaler,
+        maxLines: maxLines,
+        textWidthBasis: textWidthBasis,
+        textHeightBehavior: textHeightBehavior,
+        selectionColor: selectionColor,
       ),
-      strutStyle: strutStyle,
-      textAlign: textAlign,
-      textDirection: textDirection,
-      locale: locale,
-      softWrap: softWrap,
-      overflow: overflow,
-      textScaler: scaler ?? textScaler,
-      maxLines: maxLines,
-      textWidthBasis: textWidthBasis,
-      textHeightBehavior: textHeightBehavior,
-      selectionColor: selectionColor,
     );
   }
 
