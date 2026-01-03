@@ -31,6 +31,10 @@ class Heading extends Block {
   const Heading(this.level, this.inlines);
 }
 
+class Hrule extends Block {
+  const Hrule();
+}
+
 sealed class Inline {
   const Inline();
 }
@@ -51,4 +55,10 @@ class Strong extends Inline {
   final List<Inline> children;
 
   const Strong(this.children);
+}
+
+class Underline extends Inline {
+  final List<Inline> children;
+
+  const Underline(this.children);
 }

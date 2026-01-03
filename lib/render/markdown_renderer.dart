@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tief_weave/ast/markdown_ast.dart';
 
@@ -62,6 +63,8 @@ class MarkdownRenderer extends StatelessWidget {
         return _renderParagraph(inlines);
       case Heading(:final level, :final inlines):
         return _renderHeadings(level, inlines);
+      case Hrule():
+        return _renderHrule();
     }
   }
 
@@ -75,6 +78,10 @@ class MarkdownRenderer extends StatelessWidget {
       scaler: TextScaler.linear(2 + headingLevel / -6),
       overrideStyle: TextStyle(fontWeight: FontWeight.bold),
     );
+  }
+
+  Widget _renderHrule() {
+    return Divider(height: 30, thickness: 3, color: style?.color);
   }
 
   Widget _renderInlines(
@@ -126,6 +133,16 @@ class MarkdownRenderer extends StatelessWidget {
       case Strong(:final children):
         final nextStyle =
             baseStyle?.merge(const TextStyle(fontWeight: FontWeight.bold)) ??
+            const TextStyle(fontWeight: FontWeight.bold);
+        return TextSpan(
+          style: nextStyle,
+          children: _renderInlineSpans(children, nextStyle),
+        );
+      case Underline(:final children):
+        final nextStyle =
+            baseStyle?.merge(
+              const TextStyle(decoration: TextDecoration.underline),
+            ) ??
             const TextStyle(fontWeight: FontWeight.bold);
         return TextSpan(
           style: nextStyle,

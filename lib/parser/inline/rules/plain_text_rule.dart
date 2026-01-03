@@ -1,9 +1,9 @@
 import 'package:tief_weave/ast/markdown_ast.dart';
-import 'package:tief_weave/parser/inline/rules/rule.dart';
+import 'package:tief_weave/parser/inline/rules/inline_rule.dart';
 import 'package:tief_weave/parser/token_stream.dart';
 import 'package:tief_weave/token/token.dart';
 
-class PlainTextRule extends Rule {
+class PlainTextRule extends InlineRule {
   const PlainTextRule();
 
   @override

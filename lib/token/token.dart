@@ -6,7 +6,9 @@ abstract class Token {
     return content;
   }
 
-  bool isType<T>() {
+  bool isType<T>([T? param]) {
+    if (param != null) return runtimeType == param.runtimeType;
+
     return runtimeType == T;
   }
 

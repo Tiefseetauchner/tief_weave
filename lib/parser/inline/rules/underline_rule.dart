@@ -6,8 +6,8 @@ import 'package:tief_weave/parser/inline/rules/inline_rule.dart';
 import 'package:tief_weave/parser/token_stream.dart';
 import 'package:tief_weave/token/token.dart';
 
-class StrongRule extends InlineRule {
-  const StrongRule();
+class UnderlineRule extends InlineRule {
+  const UnderlineRule();
 
   @override
   bool process(
@@ -15,7 +15,9 @@ class StrongRule extends InlineRule {
     List<Inline> result,
     List<Token> terminator,
   ) {
-    if (!tokenStream.expectTypesEqual([Asterisk(), Asterisk()])) return false;
+    if (!tokenStream.expectTypesEqual([Underscore(), Underscore()])) {
+      return false;
+    }
 
     final mark = tokenStream.mark();
 
@@ -24,19 +26,20 @@ class StrongRule extends InlineRule {
     final inlineParser = InlineParser(
       [EmphasisRule(), PlainTextRule()],
       terminator,
-      (innerStream) => innerStream.expectTypesEqual([Asterisk(), Asterisk()]),
+      (innerStream) =>
+          innerStream.expectTypesEqual([Underscore(), Underscore()]),
     );
 
     final innerResult = inlineParser.parse(tokenStream);
 
-    if (!tokenStream.expectTypesEqual([Asterisk(), Asterisk()])) {
+    if (!tokenStream.expectTypesEqual([Underscore(), Underscore()])) {
       tokenStream.reset(mark);
       return false;
     }
 
     tokenStream.readMany(2);
 
-    result.add(Strong(innerResult));
+    result.add(Underline(innerResult));
 
     return true;
   }

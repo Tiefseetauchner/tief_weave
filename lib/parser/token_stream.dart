@@ -22,10 +22,10 @@ class TokenStream {
     return tokens.elementAt(_position + offset);
   }
 
-  Token peekPastSpaces() {
+  Token peekPastTokens<T>() {
     final oldIndex = mark();
 
-    skipTokens<Space>();
+    skipTokens<T>();
     final peeked = peek();
 
     reset(oldIndex);
@@ -70,6 +70,27 @@ class TokenStream {
     return true;
   }
 
+  bool expectTypesEqualSkippingSpaces(List<Token> tokens) {
+    final oldIndex = mark();
+
+    try {
+      for (var i = 0; i < tokens.length; i++) {
+        if (read().isType<Space>()) {
+          i--;
+          continue;
+        }
+
+        if (read().runtimeType != tokens[i].runtimeType) {
+          return false;
+        }
+      }
+    } finally {
+      reset(oldIndex);
+    }
+
+    return true;
+  }
+
   Token read() {
     if (_position >= tokens.length) {
       throw RangeError("Tried to read beyond buffer length.");
@@ -103,7 +124,7 @@ class TokenStream {
 
     final readTokens = <Token>[];
 
-    while (!expectTypesEqual(terminator) || peek().isType<EndOfFile>()) {
+    while (!expectTypesEqual(terminator) && !peek().isType<EndOfFile>()) {
       readTokens.add(read());
     }
 
