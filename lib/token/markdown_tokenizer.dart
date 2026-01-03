@@ -65,8 +65,8 @@ class MarkdonwTokenizer {
   }
 
   String _sanitizeText(String text) {
-    text = text.replaceAll("\r\n", "\n");
-    text = text.replaceAll("\r", "\n");
+    // text = text.replaceAll("\r\n", "\n");
+    // text = text.replaceAll("\r", "\n");
 
     return text;
   }

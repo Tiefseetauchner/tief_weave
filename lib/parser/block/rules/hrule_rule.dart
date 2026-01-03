@@ -8,17 +8,33 @@ class HruleRule extends BlockRule {
 
   @override
   bool process(TokenStream tokenStream, List<Block> result) {
-    if (!tokenStream.expectTypesEqual([Dash(), Dash(), Dash()])) return false;
-
     final mark = tokenStream.mark();
 
+    final lineChar = tokenStream.peekPastTokens<Space>();
+
+    if (!(lineChar.isType<Dash>() ||
+        lineChar.isType<Asterisk>() ||
+        lineChar.isType<Underscore>())) {
+      tokenStream.reset(mark);
+      return false;
+    }
+
     final lineContents = tokenStream.readTo([LineBreak()]);
-    bool spaceHit = false;
+    int lineCharCount = 0;
 
     for (final token in lineContents) {
-      if (token.isType<Space>()) spaceHit = true;
-      if (spaceHit && !token.isType<Space>()) return false;
-      if (!spaceHit && !token.isType<Dash>()) return false;
+      if (token.isType(lineChar)) {
+        lineCharCount++;
+      }
+      if (!(token.isType(lineChar) || token.isType<Space>())) {
+        tokenStream.reset(mark);
+        return false;
+      }
+    }
+
+    if (lineCharCount < 3) {
+      tokenStream.reset(mark);
+      return false;
     }
 
     result.add(Hrule());

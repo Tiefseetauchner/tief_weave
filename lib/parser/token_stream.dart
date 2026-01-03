@@ -22,10 +22,10 @@ class TokenStream {
     return tokens.elementAt(_position + offset);
   }
 
-  Token peekPastSpaces() {
+  Token peekPastTokens<T>() {
     final oldIndex = mark();
 
-    skipTokens<Space>();
+    skipTokens<T>();
     final peeked = peek();
 
     reset(oldIndex);
@@ -65,6 +65,27 @@ class TokenStream {
   bool expectTypesEqual(List<Token> tokens) {
     for (var i = 0; i < tokens.length; i++) {
       if (peek(i).runtimeType != tokens[i].runtimeType) return false;
+    }
+
+    return true;
+  }
+
+  bool expectTypesEqualSkippingSpaces(List<Token> tokens) {
+    final oldIndex = mark();
+
+    try {
+      for (var i = 0; i < tokens.length; i++) {
+        if (read().isType<Space>()) {
+          i--;
+          continue;
+        }
+
+        if (read().runtimeType != tokens[i].runtimeType) {
+          return false;
+        }
+      }
+    } finally {
+      reset(oldIndex);
     }
 
     return true;

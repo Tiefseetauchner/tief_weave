@@ -138,6 +138,16 @@ class MarkdownRenderer extends StatelessWidget {
           style: nextStyle,
           children: _renderInlineSpans(children, nextStyle),
         );
+      case Underline(:final children):
+        final nextStyle =
+            baseStyle?.merge(
+              const TextStyle(decoration: TextDecoration.underline),
+            ) ??
+            const TextStyle(fontWeight: FontWeight.bold);
+        return TextSpan(
+          style: nextStyle,
+          children: _renderInlineSpans(children, nextStyle),
+        );
     }
   }
 }
