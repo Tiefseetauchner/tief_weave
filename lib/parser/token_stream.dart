@@ -103,7 +103,7 @@ class TokenStream {
 
     final readTokens = <Token>[];
 
-    while (!expectTypesEqual(terminator) || peek().isType<EndOfFile>()) {
+    while (!expectTypesEqual(terminator) && !peek().isType<EndOfFile>()) {
       readTokens.add(read());
     }
 
