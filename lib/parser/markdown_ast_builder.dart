@@ -12,14 +12,14 @@ class MarkdownAstBuilder {
     final blockParserDecider = BlockParserDecider();
 
     final blocks = <Block>[];
-    bool reachedEof = false;
     final tokenStream = TokenStream(content);
 
-    while (!reachedEof) {
+    while (true) {
       if (tokenStream.peek().isType<EndOfFile>()) {
-        reachedEof = true;
         break;
       }
+
+      tokenStream.skipTokens<LineBreak>();
 
       // NOTE: We're at the start of a new block if we reach this
       //       Thus, we can assert the block type by token type

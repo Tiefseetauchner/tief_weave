@@ -1,5 +1,8 @@
 import 'package:tief_weave/ast/markdown_ast.dart';
-import 'package:tief_weave/parser/inline_parser.dart';
+import 'package:tief_weave/parser/inline/inline_parser.dart';
+import 'package:tief_weave/parser/inline/rules/emphasis_rule.dart';
+import 'package:tief_weave/parser/inline/rules/plain_text_rule.dart';
+import 'package:tief_weave/parser/inline/rules/strong_rule.dart';
 import 'package:tief_weave/parser/token_stream.dart';
 import 'package:tief_weave/token/token.dart';
 
@@ -19,44 +22,31 @@ sealed class BlockParser<T> {
 }
 
 class HeadingParser extends BlockParser<Heading> {
+  static const rules = [StrongRule(), EmphasisRule(), PlainTextRule()];
   @override
   Heading parse(TokenStream tokenStream) {
     tokenStream.skipTokens<Space>();
     final level = tokenStream.skipTokens<Hash>();
 
-    return Heading(level, InlineParser().parse(tokenStream, _hasBlockEnded));
-  }
-
-  bool _hasBlockEnded(TokenStream tokenStream) {
-    if (tokenStream.peek().isType<EndOfFile>()) {
-      return true;
-    }
-
-    return tokenStream.peek().isType<LineBreak>();
+    return Heading(
+      level,
+      InlineParser(rules, [LineBreak()], (_) => false).parse(tokenStream),
+    );
   }
 }
 
 class ParagraphParser extends BlockParser<Paragraph> {
+  static const rules = [StrongRule(), EmphasisRule(), PlainTextRule()];
+
   @override
   Paragraph parse(TokenStream tokenStream) {
     tokenStream.skipTokens<Space>();
 
-    return Paragraph(InlineParser().parse(tokenStream, _hasBlockEnded));
-  }
-
-  bool _hasBlockEnded(TokenStream tokenStream) {
-    final current = tokenStream.peek();
-
-    if (current.isType<EndOfFile>()) {
-      return true;
-    }
-
-    final next = tokenStream.peek(1);
-
-    if (next.isType<EndOfFile>()) {
-      return current.isType<LineBreak>();
-    }
-
-    return current.isType<LineBreak>() && next.isType<LineBreak>();
+    return Paragraph(
+      InlineParser(rules, [
+        LineBreak(),
+        LineBreak(),
+      ], (_) => false).parse(tokenStream),
+    );
   }
 }
