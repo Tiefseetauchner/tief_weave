@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tief_weave/markdown_ast.dart';
-import 'package:tief_weave/markdown_ast_builder.dart';
-import 'package:tief_weave/token.dart';
+import 'package:tief_weave/ast/markdown_ast.dart';
+import 'package:tief_weave/parser/markdown_ast_builder.dart';
+import 'package:tief_weave/token/token.dart';
 
 List<Token> _withEof(List<Token> tokens) => [...tokens, EndOfFile()];
 
@@ -43,11 +43,6 @@ void _expectInline(Inline actual, Inline expected, {String? context}) {
   }
 
   if (actual is Strong && expected is Strong) {
-    _expectInlineList(actual.children, expected.children, context: context);
-    return;
-  }
-
-  if (actual is Underline && expected is Underline) {
     _expectInlineList(actual.children, expected.children, context: context);
     return;
   }
@@ -195,49 +190,6 @@ void main() {
       _expectAst(ast, const [
         Paragraph([
           Strong([PlainText('bold')]),
-        ]),
-      ]);
-    });
-
-    test('builds underline inlines from underscores', () {
-      final ast = MarkdownAstBuilder().build(
-        _withEof([Underscore(), Word('under'), Underscore()]),
-      );
-
-      _expectAst(ast, const [
-        Paragraph([
-          Underline([PlainText('under')]),
-        ]),
-      ]);
-    });
-
-    test('mixes strong and underline inlines when nested', () {
-      final ast = MarkdownAstBuilder().build(
-        _withEof([
-          Word('Start'),
-          Space(),
-          Asterisk(),
-          Asterisk(),
-          Word('bold'),
-          Space(),
-          Underscore(),
-          Word('under'),
-          Underscore(),
-          Asterisk(),
-          Asterisk(),
-          Space(),
-          Word('end'),
-        ]),
-      );
-
-      _expectAst(ast, const [
-        Paragraph([
-          PlainText('Start '),
-          Strong([
-            PlainText('bold '),
-            Underline([PlainText('under')]),
-          ]),
-          PlainText(' end'),
         ]),
       ]);
     });

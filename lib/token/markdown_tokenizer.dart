@@ -1,4 +1,4 @@
-import 'package:tief_weave/token.dart';
+import 'package:tief_weave/token/token.dart';
 
 class MarkdonwTokenizer {
   List<Token> parse(String text) {

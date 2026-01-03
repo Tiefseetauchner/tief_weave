@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tief_weave/markdown_tokenizer.dart';
-import 'package:tief_weave/token.dart';
+import 'package:tief_weave/token/markdown_tokenizer.dart';
+import 'package:tief_weave/token/token.dart';
 
 class _TokenSpec {
   final Type type;

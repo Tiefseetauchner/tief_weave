@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
-import 'package:tief_weave/markdown_text.dart';
-import 'package:tief_weave/markdown_ast_builder.dart';
-import 'package:tief_weave/markdown_tokenizer.dart';
+import 'package:tief_weave/renderr/markdown_renderer.dart';
+import 'package:tief_weave/parser/markdown_ast_builder.dart';
+import 'package:tief_weave/token/markdown_tokenizer.dart';
 
 class Markdown extends StatelessWidget {
   final String text;
@@ -37,7 +37,7 @@ class Markdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MarkdownText(
+    return MarkdownRenderer(
       MarkdownAstBuilder().build(MarkdonwTokenizer().parse(text)),
       style: style,
       strutStyle: strutStyle,

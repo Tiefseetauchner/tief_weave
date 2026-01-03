@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
-import 'package:tief_weave/markdown_ast.dart';
+import 'package:tief_weave/ast/markdown_ast.dart';
 
-class MarkdownText extends StatelessWidget {
+class MarkdownRenderer extends StatelessWidget {
   final MarkdownAst ast;
   final TextStyle? style;
   final StrutStyle? strutStyle;
@@ -16,7 +16,7 @@ class MarkdownText extends StatelessWidget {
   final TextHeightBehavior? textHeightBehavior;
   final Color? selectionColor;
 
-  const MarkdownText(
+  const MarkdownRenderer(
     this.ast, {
     super.key,
     this.style,
@@ -39,7 +39,7 @@ class MarkdownText extends StatelessWidget {
 
     return Column(
       mainAxisAlignment: _mainAxisAlignmentFromTextAlign(textAlign),
-      spacing: 1.35,
+      spacing: 12,
       children: builtTree,
     );
   }
@@ -137,16 +137,6 @@ class MarkdownText extends StatelessWidget {
         final nextStyle =
             baseStyle?.merge(const TextStyle(fontWeight: FontWeight.bold)) ??
             const TextStyle(fontWeight: FontWeight.bold);
-        return TextSpan(
-          style: nextStyle,
-          children: _renderInlineSpans(children, nextStyle),
-        );
-      case Underline(:final children):
-        final nextStyle =
-            baseStyle?.merge(
-              const TextStyle(decoration: TextDecoration.underline),
-            ) ??
-            const TextStyle(decoration: TextDecoration.underline);
         return TextSpan(
           style: nextStyle,
           children: _renderInlineSpans(children, nextStyle),

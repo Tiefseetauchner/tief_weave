@@ -52,9 +52,3 @@ class Strong extends Inline {
 
   const Strong(this.children);
 }
-
-class Underline extends Inline {
-  final List<Inline> children;
-
-  const Underline(this.children);
-}
