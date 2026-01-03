@@ -1,6 +1,6 @@
 import 'package:tief_weave/token.dart';
 
-class MarkdownParser {
+class MarkdonwTokenizer {
   List<Token> parse(String text) {
     text = _sanitizeText(text);
     final result = <Token>[];

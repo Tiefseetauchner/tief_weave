@@ -1,8 +1,10 @@
 import 'package:flutter/widgets.dart';
-import 'package:tief_weave/markdown_ast.dart';
+import 'package:tief_weave/markdown_text.dart';
+import 'package:tief_weave/markdown_ast_builder.dart';
+import 'package:tief_weave/markdown_tokenizer.dart';
 
 class Markdown extends StatelessWidget {
-  final MarkdownAst ast;
+  final String text;
   final TextStyle? style;
   final StrutStyle? strutStyle;
   final TextAlign? textAlign;
@@ -17,7 +19,7 @@ class Markdown extends StatelessWidget {
   final Color? selectionColor;
 
   const Markdown(
-    this.ast, {
+    this.text, {
     super.key,
     this.style,
     this.strutStyle,
@@ -35,61 +37,20 @@ class Markdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final builtTree = _buildWidgetTreeFromAst(ast);
-
-    return Stack(children: builtTree);
-  }
-
-  List<Widget> _buildWidgetTreeFromAst(MarkdownAst ast) {
-    final result = <Widget>[];
-
-    for (final block in ast.document.blocks) {
-      result.add(_renderBlock(block));
-    }
-
-    return result;
-  }
-
-  Widget _renderBlock(Block block) {
-    switch (block.runtimeType) {
-      case Paragraph _:
-        return Text(
-          "Paragraph",
-          key: key,
-          style: style,
-          strutStyle: strutStyle,
-          textAlign: textAlign,
-          textDirection: textDirection,
-          locale: locale,
-          softWrap: softWrap,
-          overflow: overflow,
-          textScaler: textScaler,
-          maxLines: maxLines,
-          textWidthBasis: textWidthBasis,
-          textHeightBehavior: textHeightBehavior,
-          selectionColor: selectionColor,
-        );
-      case Heading _:
-        return Text(
-          "Heading",
-          key: key,
-          style: style,
-          strutStyle: strutStyle,
-          textAlign: textAlign,
-          textDirection: textDirection,
-          locale: locale,
-          softWrap: softWrap,
-          overflow: overflow,
-          textScaler: textScaler,
-          maxLines: maxLines,
-          textWidthBasis: textWidthBasis,
-          textHeightBehavior: textHeightBehavior,
-          selectionColor: selectionColor,
-        );
-      default:
-        throw ArgumentError(
-          "Block type '${block.runtimeType}' is not recognized as a renderable element.",
-        );
-    }
+    return MarkdownText(
+      MarkdownAstBuilder().build(MarkdonwTokenizer().parse(text)),
+      style: style,
+      strutStyle: strutStyle,
+      textAlign: textAlign,
+      textDirection: textDirection,
+      locale: locale,
+      softWrap: softWrap,
+      overflow: overflow,
+      textScaler: textScaler,
+      maxLines: maxLines,
+      textWidthBasis: textWidthBasis,
+      textHeightBehavior: textHeightBehavior,
+      selectionColor: selectionColor,
+    );
   }
 }

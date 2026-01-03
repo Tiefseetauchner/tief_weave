@@ -6,6 +6,10 @@ abstract class Token {
     return content;
   }
 
+  bool isType<T>() {
+    return runtimeType == T;
+  }
+
   Token(this.content);
 }
 

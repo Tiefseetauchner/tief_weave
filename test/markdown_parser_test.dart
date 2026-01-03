@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tief_weave/markdown_parser.dart';
+import 'package:tief_weave/markdown_tokenizer.dart';
 import 'package:tief_weave/token.dart';
 
 class _TokenSpec {
@@ -33,7 +33,7 @@ void _expectTokens(List<Token> actual, List<_TokenSpec> expected) {
 void main() {
   group('MarkdownParser', () {
     test('tokenizes words and spaces', () {
-      final tokens = MarkdownParser().parse('Hello world');
+      final tokens = MarkdonwTokenizer().parse('Hello world');
 
       _expectTokens(tokens, const [
         _TokenSpec(Word, 'Hello'),
@@ -44,7 +44,7 @@ void main() {
     });
 
     test('tokenizes inline markers without surrounding spaces', () {
-      final tokens = MarkdownParser().parse('a*b_c-d=1#h');
+      final tokens = MarkdonwTokenizer().parse('a*b_c-d=1#h');
 
       _expectTokens(tokens, const [
         _TokenSpec(Word, 'a'),
@@ -63,7 +63,7 @@ void main() {
     });
 
     test('tokenizes heading marker and following word', () {
-      final tokens = MarkdownParser().parse('# Title');
+      final tokens = MarkdonwTokenizer().parse('# Title');
 
       _expectTokens(tokens, const [
         _TokenSpec(Hash, '#'),
@@ -74,7 +74,7 @@ void main() {
     });
 
     test('tokenizes escaped characters', () {
-      final tokens = MarkdownParser().parse('*notEscaped*\\*escaped\\*');
+      final tokens = MarkdonwTokenizer().parse('*notEscaped*\\*escaped\\*');
 
       _expectTokens(tokens, const [
         _TokenSpec(Asterisk, "*"),
@@ -86,7 +86,7 @@ void main() {
     });
 
     test('normalizes line endings before tokenizing', () {
-      final tokens = MarkdownParser().parse('a\r\nb\rc\nd');
+      final tokens = MarkdonwTokenizer().parse('a\r\nb\rc\nd');
 
       _expectTokens(tokens, const [
         _TokenSpec(Word, 'a'),
@@ -101,7 +101,7 @@ void main() {
     });
 
     test('escapes line breaks', () {
-      final tokens = MarkdownParser().parse('a\\\r\nb\\\rc\\\nd');
+      final tokens = MarkdonwTokenizer().parse('a\\\r\nb\\\rc\\\nd');
 
       _expectTokens(tokens, const [
         _TokenSpec(Word, 'a\nb\nc\nd'),

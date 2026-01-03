@@ -14,7 +14,7 @@ class Document {
   const Document.empty() : blocks = const [];
 }
 
-abstract class Block {
+sealed class Block {
   const Block();
 }
 
@@ -31,7 +31,7 @@ class Heading extends Block {
   const Heading(this.level, this.inlines);
 }
 
-abstract class Inline {
+sealed class Inline {
   const Inline();
 }
 
