@@ -41,7 +41,7 @@ class MarkdownRenderer extends StatelessWidget {
     final builtTree = _buildWidgetTreeFromAst(ast);
 
     return Column(
-      spacing: 12,
+      spacing: 32,
       mainAxisSize: MainAxisSize.max,
       children: builtTree,
     );
