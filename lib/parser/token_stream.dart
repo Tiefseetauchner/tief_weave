@@ -58,7 +58,7 @@ class TokenStream {
     return peeked;
   }
 
-  bool expect<T>([int offset = 0]) {
+  bool expect<T extends Token>([int offset = 0]) {
     return peek(offset).isType<T>();
   }
 

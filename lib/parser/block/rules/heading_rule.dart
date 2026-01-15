@@ -1,7 +1,9 @@
 import 'package:tief_weave/ast/markdown_ast.dart';
 import 'package:tief_weave/parser/block/rules/block_rule.dart';
 import 'package:tief_weave/parser/inline/inline_parser.dart';
+import 'package:tief_weave/parser/inline/rules/em_dash_rule.dart';
 import 'package:tief_weave/parser/inline/rules/emphasis_rule.dart';
+import 'package:tief_weave/parser/inline/rules/en_dash_rule.dart';
 import 'package:tief_weave/parser/inline/rules/plain_text_rule.dart';
 import 'package:tief_weave/parser/inline/rules/strong_rule.dart';
 import 'package:tief_weave/parser/inline/rules/underline_rule.dart';
@@ -15,6 +17,8 @@ class HeadingRule extends BlockRule {
     UnderlineRule(),
     StrongRule(),
     EmphasisRule(),
+    EmDashRule(),
+    EnDashRule(),
     PlainTextRule(),
   ];
 
