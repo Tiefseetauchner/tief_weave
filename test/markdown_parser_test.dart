@@ -33,7 +33,7 @@ void _expectTokens(List<Token> actual, List<_TokenSpec> expected) {
 void main() {
   group('MarkdownParser', () {
     test('tokenizes words and spaces', () {
-      final tokens = MarkdonwTokenizer().parse('Hello world');
+      final tokens = MarkdownTokenizer().parse('Hello world');
 
       _expectTokens(tokens, const [
         _TokenSpec(Word, 'Hello'),
@@ -44,7 +44,7 @@ void main() {
     });
 
     test('tokenizes inline markers without surrounding spaces', () {
-      final tokens = MarkdonwTokenizer().parse('a*b_c-d=1#h');
+      final tokens = MarkdownTokenizer().parse('a*b_c-d=1#h');
 
       _expectTokens(tokens, const [
         _TokenSpec(Word, 'a'),
@@ -63,7 +63,7 @@ void main() {
     });
 
     test('tokenizes heading marker and following word', () {
-      final tokens = MarkdonwTokenizer().parse('# Title');
+      final tokens = MarkdownTokenizer().parse('# Title');
 
       _expectTokens(tokens, const [
         _TokenSpec(Hash, '#'),
@@ -74,7 +74,7 @@ void main() {
     });
 
     test('tokenizes escaped characters', () {
-      final tokens = MarkdonwTokenizer().parse('*notEscaped*\\*escaped\\*');
+      final tokens = MarkdownTokenizer().parse('*notEscaped*\\*escaped\\*');
 
       _expectTokens(tokens, const [
         _TokenSpec(Asterisk, "*"),
@@ -86,7 +86,7 @@ void main() {
     });
 
     test('normalizes line endings before tokenizing', () {
-      final tokens = MarkdonwTokenizer().parse('a\r\nb\rc\nd');
+      final tokens = MarkdownTokenizer().parse('a\r\nb\rc\nd');
 
       _expectTokens(tokens, const [
         _TokenSpec(Word, 'a'),
@@ -101,7 +101,7 @@ void main() {
     });
 
     test('escapes line breaks', () {
-      final tokens = MarkdonwTokenizer().parse('a\\\r\nb\\\rc\\\nd');
+      final tokens = MarkdownTokenizer().parse('a\\\r\nb\\\rc\\\nd');
 
       _expectTokens(tokens, const [
         _TokenSpec(Word, 'a\nb\nc\nd'),

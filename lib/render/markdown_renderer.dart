@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:tief_weave/ast/markdown_ast.dart';
 
-class MarkdownRenderer extends StatelessWidget {
+class MarkdownRenderer extends StatefulWidget {
   final MarkdownAst ast;
   final TextStyle? style;
   final StrutStyle? strutStyle;
@@ -37,9 +36,30 @@ class MarkdownRenderer extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final builtTree = _buildWidgetTreeFromAst(ast);
+  State<MarkdownRenderer> createState() => _MarkdownRendererState();
+}
 
+class _MarkdownRendererState extends State<MarkdownRenderer> {
+  late List<Widget> builtTree;
+
+  @override
+  void initState() {
+    builtTree = _buildWidgetTreeFromAst(widget.ast);
+
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant MarkdownRenderer oldWidget) {
+    if (widget.ast != oldWidget.ast) {
+      builtTree = _buildWidgetTreeFromAst(widget.ast);
+    }
+
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       spacing: 32,
       mainAxisSize: MainAxisSize.max,
@@ -60,11 +80,11 @@ class MarkdownRenderer extends StatelessWidget {
   Widget _renderBlock(Block block) {
     switch (block) {
       case Paragraph(:final inlines):
-        return _renderParagraph(inlines);
+        return RepaintBoundary(child: _renderParagraph(inlines));
       case Heading(:final level, :final inlines):
-        return _renderHeadings(level, inlines);
+        return RepaintBoundary(child: _renderHeadings(level, inlines));
       case Hrule():
-        return _renderHrule();
+        return RepaintBoundary(child: _renderHrule());
     }
   }
 
@@ -81,7 +101,7 @@ class MarkdownRenderer extends StatelessWidget {
   }
 
   Widget _renderHrule() {
-    return Divider(height: 30, thickness: 3, color: style?.color);
+    return Divider(height: 30, thickness: 3, color: widget.style?.color);
   }
 
   Widget _renderInlines(
@@ -90,23 +110,23 @@ class MarkdownRenderer extends StatelessWidget {
     TextStyle? overrideStyle,
   }) {
     return SizedBox(
-      width: width,
+      width: widget.width,
       child: Text.rich(
         TextSpan(
-          style: style?.merge(overrideStyle),
-          children: _renderInlineSpans(inlines, style),
+          style: widget.style?.merge(overrideStyle),
+          children: _renderInlineSpans(inlines, widget.style),
         ),
-        strutStyle: strutStyle,
-        textAlign: textAlign,
-        textDirection: textDirection,
-        locale: locale,
-        softWrap: softWrap,
-        overflow: overflow,
-        textScaler: scaler ?? textScaler,
-        maxLines: maxLines,
-        textWidthBasis: textWidthBasis,
-        textHeightBehavior: textHeightBehavior,
-        selectionColor: selectionColor,
+        strutStyle: widget.strutStyle,
+        textAlign: widget.textAlign,
+        textDirection: widget.textDirection,
+        locale: widget.locale,
+        softWrap: widget.softWrap,
+        overflow: widget.overflow,
+        textScaler: scaler ?? widget.textScaler,
+        maxLines: widget.maxLines,
+        textWidthBasis: widget.textWidthBasis,
+        textHeightBehavior: widget.textHeightBehavior,
+        selectionColor: widget.selectionColor,
       ),
     );
   }

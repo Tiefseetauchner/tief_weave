@@ -1,6 +1,6 @@
 import 'package:tief_weave/token/token.dart';
 
-class MarkdonwTokenizer {
+class MarkdownTokenizer {
   List<Token> parse(String text) {
     text = _sanitizeText(text);
     final result = <Token>[];
@@ -65,8 +65,8 @@ class MarkdonwTokenizer {
   }
 
   String _sanitizeText(String text) {
-    // text = text.replaceAll("\r\n", "\n");
-    // text = text.replaceAll("\r", "\n");
+    text = text.replaceAll("\r\n", "\n");
+    text = text.replaceAll("\r", "\n");
 
     return text;
   }

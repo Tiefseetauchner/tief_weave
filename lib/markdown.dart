@@ -1,9 +1,10 @@
 import 'package:flutter/widgets.dart';
+import 'package:tief_weave/ast/markdown_ast.dart';
 import 'package:tief_weave/render/markdown_renderer.dart';
 import 'package:tief_weave/parser/markdown_ast_builder.dart';
 import 'package:tief_weave/token/markdown_tokenizer.dart';
 
-class Markdown extends StatelessWidget {
+class Markdown extends StatefulWidget {
   final String text;
   final TextStyle? style;
   final StrutStyle? strutStyle;
@@ -38,22 +39,45 @@ class Markdown extends StatelessWidget {
   });
 
   @override
+  State<Markdown> createState() => _MarkdownState();
+}
+
+class _MarkdownState extends State<Markdown> {
+  late MarkdownAst ast;
+
+  @override
+  void initState() {
+    ast = MarkdownAstBuilder().build(MarkdownTokenizer().parse(widget.text));
+
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant Markdown oldWidget) {
+    if (widget.text != oldWidget.text) {
+      ast = MarkdownAstBuilder().build(MarkdownTokenizer().parse(widget.text));
+    }
+
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MarkdownRenderer(
-      MarkdownAstBuilder().build(MarkdonwTokenizer().parse(text)),
-      style: style,
-      strutStyle: strutStyle,
-      textAlign: textAlign,
-      textDirection: textDirection,
-      locale: locale,
-      softWrap: softWrap,
-      overflow: overflow,
-      textScaler: textScaler,
-      maxLines: maxLines,
-      textWidthBasis: textWidthBasis,
-      textHeightBehavior: textHeightBehavior,
-      selectionColor: selectionColor,
-      width: width,
+      ast,
+      style: widget.style,
+      strutStyle: widget.strutStyle,
+      textAlign: widget.textAlign,
+      textDirection: widget.textDirection,
+      locale: widget.locale,
+      softWrap: widget.softWrap,
+      overflow: widget.overflow,
+      textScaler: widget.textScaler,
+      maxLines: widget.maxLines,
+      textWidthBasis: widget.textWidthBasis,
+      textHeightBehavior: widget.textHeightBehavior,
+      selectionColor: widget.selectionColor,
+      width: widget.width,
     );
   }
 }
