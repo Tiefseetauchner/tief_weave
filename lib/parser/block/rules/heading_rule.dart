@@ -34,6 +34,7 @@ class HeadingRule extends BlockRule {
     }
 
     final level = tokenStream.skipTokens<Hash>();
+    tokenStream.skipTokens<Space>();
 
     result.add(
       Heading(

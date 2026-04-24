@@ -16,7 +16,7 @@ class PlainTextRule extends InlineRule {
       return false;
     }
 
-    var token = tokenStream.read();
+    final token = tokenStream.read();
 
     if (token.isType<LineBreak>()) {
       result.add(PlainText(" "));

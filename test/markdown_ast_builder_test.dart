@@ -1,7 +1,7 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:tief_weave/ast/markdown_ast.dart';
-import 'package:tief_weave/parser/markdown_ast_builder.dart';
-import 'package:tief_weave/token/token.dart';
+import "package:flutter_test/flutter_test.dart";
+import "package:tief_weave/ast/markdown_ast.dart";
+import "package:tief_weave/parser/markdown_ast_builder.dart";
+import "package:tief_weave/token/token.dart";
 
 List<Token> _withEof(List<Token> tokens) => [...tokens, EndOfFile()];
 
@@ -13,11 +13,11 @@ void _expectInlineList(
   expect(
     actual.length,
     expected.length,
-    reason: '${context ?? 'Inline list'} length mismatch.',
+    reason: "${context ?? "Inline list"} length mismatch.",
   );
 
   for (var i = 0; i < expected.length; i++) {
-    _expectInline(actual[i], expected[i], context: '${context ?? 'Inline'} $i');
+    _expectInline(actual[i], expected[i], context: "${context ?? "Inline"} $i");
   }
 }
 
@@ -25,14 +25,14 @@ void _expectInline(Inline actual, Inline expected, {String? context}) {
   expect(
     actual.runtimeType,
     expected.runtimeType,
-    reason: '${context ?? 'Inline'} type mismatch.',
+    reason: "${context ?? "Inline"} type mismatch.",
   );
 
   if (actual is PlainText && expected is PlainText) {
     expect(
       actual.text,
       expected.text,
-      reason: '${context ?? 'Inline'} text mismatch.',
+      reason: "${context ?? "Inline"} text mismatch.",
     );
     return;
   }
@@ -47,14 +47,19 @@ void _expectInline(Inline actual, Inline expected, {String? context}) {
     return;
   }
 
-  fail('${context ?? 'Inline'} has an unsupported type.');
+  if (actual is Underline && expected is Underline) {
+    _expectInlineList(actual.children, expected.children, context: context);
+    return;
+  }
+
+  fail("${context ?? "Inline"} has an unsupported type.");
 }
 
 void _expectBlockList(List<Block> actual, List<Block> expected) {
-  expect(actual.length, expected.length, reason: 'Block count mismatch.');
+  expect(actual.length, expected.length, reason: "Block count mismatch.");
 
   for (var i = 0; i < expected.length; i++) {
-    _expectBlock(actual[i], expected[i], context: 'Block $i');
+    _expectBlock(actual[i], expected[i], context: "Block $i");
   }
 }
 
@@ -62,7 +67,7 @@ void _expectBlock(Block actual, Block expected, {String? context}) {
   expect(
     actual.runtimeType,
     expected.runtimeType,
-    reason: '${context ?? 'Block'} type mismatch.',
+    reason: "${context ?? "Block"} type mismatch.",
   );
 
   if (actual is Paragraph && expected is Paragraph) {
@@ -74,13 +79,13 @@ void _expectBlock(Block actual, Block expected, {String? context}) {
     expect(
       actual.level,
       expected.level,
-      reason: '${context ?? 'Block'} heading level mismatch.',
+      reason: "${context ?? "Block"} heading level mismatch.",
     );
     _expectInlineList(actual.inlines, expected.inlines, context: context);
     return;
   }
 
-  fail('${context ?? 'Block'} has an unsupported type.');
+  fail("${context ?? "Block"} has an unsupported type.");
 }
 
 void _expectAst(MarkdownAst actual, List<Block> expectedBlocks) {
@@ -88,68 +93,68 @@ void _expectAst(MarkdownAst actual, List<Block> expectedBlocks) {
 }
 
 void main() {
-  group('MarkdownAstBuilder', () {
-    test('throws without EndOfFile token', () {
+  group("MarkdownAstBuilder", () {
+    test("throws without EndOfFile token", () {
       expect(
-        () => MarkdownAstBuilder().build([Word('Missing')]),
+        () => MarkdownAstBuilder().build([Word("Missing")]),
         throwsArgumentError,
       );
     });
 
-    test('builds empty tree', () {
+    test("builds empty tree", () {
       final ast = MarkdownAstBuilder().build([EndOfFile()]);
 
       _expectAst(ast, const []);
     });
 
-    test('builds paragraph with plain text', () {
+    test("builds paragraph with plain text", () {
       final ast = MarkdownAstBuilder().build(
-        _withEof([Word('Hello'), Space(), Word('world')]),
+        _withEof([Word("Hello"), Space(), Word("world")]),
       );
 
       _expectAst(ast, const [
-        Paragraph([PlainText('Hello world')]),
+        Paragraph([PlainText("Hello"), PlainText(" "), PlainText("world")]),
       ]);
     });
 
-    test('builds multiple paragraphs separated by a blank line', () {
+    test("builds multiple paragraphs separated by a blank line", () {
       final ast = MarkdownAstBuilder().build(
-        _withEof([Word('First'), LineBreak(), LineBreak(), Word('Second')]),
+        _withEof([Word("First"), LineBreak(), LineBreak(), Word("Second")]),
       );
 
       _expectAst(ast, const [
-        Paragraph([PlainText('First')]),
-        Paragraph([PlainText('Second')]),
+        Paragraph([PlainText("First")]),
+        Paragraph([PlainText("Second")]),
       ]);
     });
 
-    test('builds a level-1 heading from a leading hash', () {
+    test("builds a level-1 heading from a leading hash", () {
       final ast = MarkdownAstBuilder().build(
-        _withEof([Hash(), Space(), Word('Title'), LineBreak()]),
+        _withEof([Hash(), Space(), Word("Title")]),
       );
 
       _expectAst(ast, const [
-        Heading(1, [PlainText('Title')]),
+        Heading(1, [PlainText("Title")]),
       ]);
     });
 
-    test('builds a level-2 heading from two leading hashes', () {
+    test("builds a level-2 heading from two leading hashes", () {
       final ast = MarkdownAstBuilder().build(
-        _withEof([Hash(), Hash(), Space(), Word('Subtitle')]),
+        _withEof([Hash(), Hash(), Space(), Word("Subtitle")]),
       );
 
       _expectAst(ast, const [
-        Heading(2, [PlainText('Subtitle')]),
+        Heading(2, [PlainText("Subtitle")]),
       ]);
     });
 
-    test('builds a level-2 heading from two leading hashes with emphasis', () {
+    test("builds a level-2 heading from two leading hashes with emphasis", () {
       final ast = MarkdownAstBuilder().build(
         _withEof([
           Hash(),
           Hash(),
           Space(),
-          Word('Subtitle'),
+          Word("Subtitle"),
           Asterisk(),
           Word("Emphasized"),
           Asterisk(),
@@ -158,30 +163,48 @@ void main() {
 
       _expectAst(ast, const [
         Heading(2, [
-          PlainText('Subtitle'),
+          PlainText("Subtitle"),
           Emphasis([PlainText("Emphasized")]),
         ]),
       ]);
     });
 
-    test('builds emphasis inlines from single asterisks', () {
+    test("builds emphasis inlines from single asterisks", () {
       final ast = MarkdownAstBuilder().build(
-        _withEof([Asterisk(), Word('emph'), Asterisk()]),
+        _withEof([Asterisk(), Word("emph"), Asterisk()]),
       );
 
       _expectAst(ast, const [
         Paragraph([
-          Emphasis([PlainText('emph')]),
+          Emphasis([PlainText("emph")]),
         ]),
       ]);
     });
 
-    test('builds strong inlines from double asterisks', () {
+    test("builds underline inlines from double underscore", () {
+      final ast = MarkdownAstBuilder().build(
+        _withEof([
+          Underscore(),
+          Underscore(),
+          Word("underline"),
+          Underscore(),
+          Underscore(),
+        ]),
+      );
+
+      _expectAst(ast, const [
+        Paragraph([
+          Underline([PlainText("underline")]),
+        ]),
+      ]);
+    });
+
+    test("builds strong inlines from double asterisks", () {
       final ast = MarkdownAstBuilder().build(
         _withEof([
           Asterisk(),
           Asterisk(),
-          Word('bold'),
+          Word("bold"),
           Asterisk(),
           Asterisk(),
         ]),
@@ -189,9 +212,42 @@ void main() {
 
       _expectAst(ast, const [
         Paragraph([
-          Strong([PlainText('bold')]),
+          Strong([PlainText("bold")]),
         ]),
       ]);
     });
+
+    test(
+      "builds strong undelined inlines from double underscore double asterisks",
+      () {
+        final ast = MarkdownAstBuilder().build(
+          _withEof([
+            Underscore(),
+            Underscore(),
+            Asterisk(),
+            Asterisk(),
+            Word("bold"),
+            Space(),
+            Word("underlined"),
+            Asterisk(),
+            Asterisk(),
+            Underscore(),
+            Underscore(),
+          ]),
+        );
+
+        _expectAst(ast, const [
+          Paragraph([
+            Underline([
+              Strong([
+                PlainText("bold"),
+                PlainText(" "),
+                PlainText("underlined"),
+              ]),
+            ]),
+          ]),
+        ]);
+      },
+    );
   });
 }
