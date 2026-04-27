@@ -1,6 +1,6 @@
 name: tief_weave
 description: "The simplest and dumbest markdown renderer for flutter."
-version: 0.2.0
+version: 0.2.1
 homepage: https://github.com/Tiefseetauchner/tief_weave/
 
 environment:

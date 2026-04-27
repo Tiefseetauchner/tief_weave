@@ -40,30 +40,12 @@ class MarkdownRenderer extends StatefulWidget {
 }
 
 class _MarkdownRendererState extends State<MarkdownRenderer> {
-  late List<Widget> builtTree;
-
-  @override
-  void initState() {
-    builtTree = _buildWidgetTreeFromAst(widget.ast);
-
-    super.initState();
-  }
-
-  @override
-  void didUpdateWidget(covariant MarkdownRenderer oldWidget) {
-    if (widget.ast != oldWidget.ast) {
-      builtTree = _buildWidgetTreeFromAst(widget.ast);
-    }
-
-    super.didUpdateWidget(oldWidget);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
       spacing: 32,
       mainAxisSize: MainAxisSize.max,
-      children: builtTree,
+      children: _buildWidgetTreeFromAst(widget.ast),
     );
   }
 
