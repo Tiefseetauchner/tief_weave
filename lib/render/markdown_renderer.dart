@@ -1,6 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:tief_weave/ast/markdown_ast.dart';
 
+class MarkdownRendererController extends ChangeNotifier {
+  _MarkdownRendererState? _state;
+
+  void _attach(_MarkdownRendererState state) {
+    _state = state;
+  }
+
+  void _detach(_MarkdownRendererState state) {
+    if (_state == state) _state = null;
+  }
+
+  void _notifyLayout() => notifyListeners();
+
+  int get blockCount => _state?._blockCount ?? 0;
+
+  double? offsetOf(int blockIndex) => _state?._blockOffset(blockIndex);
+}
+
 class MarkdownRenderer extends StatefulWidget {
   final MarkdownAst ast;
   final TextStyle? style;
@@ -16,6 +34,7 @@ class MarkdownRenderer extends StatefulWidget {
   final TextHeightBehavior? textHeightBehavior;
   final Color? selectionColor;
   final double? width;
+  final MarkdownRendererController? controller;
 
   const MarkdownRenderer(
     this.ast, {
@@ -33,6 +52,7 @@ class MarkdownRenderer extends StatefulWidget {
     this.textHeightBehavior,
     this.selectionColor,
     this.width,
+    this.controller,
   });
 
   @override
@@ -40,6 +60,65 @@ class MarkdownRenderer extends StatefulWidget {
 }
 
 class _MarkdownRendererState extends State<MarkdownRenderer> {
+  List<GlobalKey> _blockKeys = const [];
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller?._attach(this);
+    _syncBlockKeys();
+    _scheduleLayoutNotification();
+  }
+
+  @override
+  void didUpdateWidget(MarkdownRenderer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      oldWidget.controller?._detach(this);
+      widget.controller?._attach(this);
+    }
+    _syncBlockKeys();
+    _scheduleLayoutNotification();
+  }
+
+  @override
+  void dispose() {
+    widget.controller?._detach(this);
+    super.dispose();
+  }
+
+  void _syncBlockKeys() {
+    final count = widget.ast.document.blocks.length;
+    if (_blockKeys.length != count) {
+      _blockKeys = List.generate(count, (_) => GlobalKey());
+    }
+  }
+
+  void _scheduleLayoutNotification() {
+    final controller = widget.controller;
+    if (controller == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) controller._notifyLayout();
+    });
+  }
+
+  int get _blockCount => widget.ast.document.blocks.length;
+
+  double? _blockOffset(int blockIndex) {
+    if (blockIndex < 0 || blockIndex >= _blockKeys.length) return null;
+
+    final root = context.findRenderObject();
+    final blockContext = _blockKeys[blockIndex].currentContext;
+    if (root is! RenderBox || !root.hasSize || blockContext == null) {
+      return null;
+    }
+
+    final box = blockContext.findRenderObject();
+    if (box is! RenderBox || !box.hasSize) return null;
+
+    return box.localToGlobal(Offset.zero, ancestor: root).dy;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -50,13 +129,13 @@ class _MarkdownRendererState extends State<MarkdownRenderer> {
   }
 
   List<Widget> _buildWidgetTreeFromAst(MarkdownAst ast) {
-    final result = <Widget>[];
-
-    for (final block in ast.document.blocks) {
-      result.add(_renderBlock(block));
-    }
-
-    return result;
+    return [
+      for (var i = 0; i < ast.document.blocks.length; i++)
+        KeyedSubtree(
+          key: _blockKeys[i],
+          child: _renderBlock(ast.document.blocks[i]),
+        ),
+    ];
   }
 
   Widget _renderBlock(Block block) {

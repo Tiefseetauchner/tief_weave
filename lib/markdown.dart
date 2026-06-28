@@ -4,6 +4,11 @@ import 'package:tief_weave/render/markdown_renderer.dart';
 import 'package:tief_weave/parser/markdown_ast_builder.dart';
 import 'package:tief_weave/token/markdown_tokenizer.dart';
 
+export 'package:tief_weave/ast/markdown_ast.dart';
+export 'package:tief_weave/parser/markdown_ast_builder.dart';
+export 'package:tief_weave/render/markdown_renderer.dart';
+export 'package:tief_weave/token/markdown_tokenizer.dart';
+
 class Markdown extends StatefulWidget {
   final String text;
   final TextStyle? style;
@@ -19,6 +24,7 @@ class Markdown extends StatefulWidget {
   final TextHeightBehavior? textHeightBehavior;
   final Color? selectionColor;
   final double? width;
+  final MarkdownRendererController? controller;
 
   const Markdown(
     this.text, {
@@ -36,6 +42,7 @@ class Markdown extends StatefulWidget {
     this.textHeightBehavior,
     this.selectionColor,
     this.width,
+    this.controller,
   });
 
   @override
@@ -78,6 +85,7 @@ class _MarkdownState extends State<Markdown> {
       textHeightBehavior: widget.textHeightBehavior,
       selectionColor: widget.selectionColor,
       width: widget.width,
+      controller: widget.controller,
     );
   }
 }
