@@ -171,7 +171,7 @@ class _MarkdownRendererState extends State<MarkdownRenderer> {
     TextStyle? overrideStyle,
   }) {
     return SizedBox(
-      width: widget.width,
+      width: widget.width ?? double.infinity,
       child: Text.rich(
         TextSpan(
           style: widget.style?.merge(overrideStyle),
@@ -224,7 +224,7 @@ class _MarkdownRendererState extends State<MarkdownRenderer> {
             baseStyle?.merge(
               const TextStyle(decoration: TextDecoration.underline),
             ) ??
-            const TextStyle(fontWeight: FontWeight.bold);
+            const TextStyle(decoration: TextDecoration.underline);
         return TextSpan(
           style: nextStyle,
           children: _renderInlineSpans(children, nextStyle),
