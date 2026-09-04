@@ -2,19 +2,21 @@ import 'package:flutter/widgets.dart';
 import 'package:tief_weave/ast/markdown_ast.dart';
 import 'package:tief_weave/render/markdown_renderer.dart';
 import 'package:tief_weave/parser/markdown_ast_builder.dart';
+import 'package:tief_weave/text_direction/paragraph_text_direction_resolver.dart';
 import 'package:tief_weave/token/markdown_tokenizer.dart';
 
 export 'package:tief_weave/ast/markdown_ast.dart';
 export 'package:tief_weave/parser/markdown_ast_builder.dart';
 export 'package:tief_weave/render/markdown_renderer.dart';
 export 'package:tief_weave/token/markdown_tokenizer.dart';
+export 'package:tief_weave/text_direction/paragraph_text_direction_resolver.dart';
 
 class Markdown extends StatefulWidget {
   final String text;
   final TextStyle? style;
   final StrutStyle? strutStyle;
   final TextAlign? textAlign;
-  final TextDirection? textDirection;
+  final TextDirectionMode? textDirectionMode;
   final Locale? locale;
   final bool? softWrap;
   final TextOverflow? overflow;
@@ -32,7 +34,7 @@ class Markdown extends StatefulWidget {
     this.style,
     this.strutStyle,
     this.textAlign,
-    this.textDirection,
+    this.textDirectionMode,
     this.locale,
     this.softWrap,
     this.overflow,
@@ -75,7 +77,7 @@ class _MarkdownState extends State<Markdown> {
       style: widget.style,
       strutStyle: widget.strutStyle,
       textAlign: widget.textAlign,
-      textDirection: widget.textDirection,
+      textDirectionMode: widget.textDirectionMode,
       locale: widget.locale,
       softWrap: widget.softWrap,
       overflow: widget.overflow,

@@ -96,7 +96,8 @@ class Emphasis extends Inline {
 
   @override
   bool operator ==(Object other) =>
-      other is Emphasis && const ListEquality().equals(children, other.children);
+      other is Emphasis &&
+      const ListEquality().equals(children, other.children);
 
   @override
   int get hashCode => const ListEquality().hash(children);
@@ -122,7 +123,8 @@ class Underline extends Inline {
 
   @override
   bool operator ==(Object other) =>
-      other is Underline && const ListEquality().equals(children, other.children);
+      other is Underline &&
+      const ListEquality().equals(children, other.children);
 
   @override
   int get hashCode => const ListEquality().hash(children);
