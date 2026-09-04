@@ -17,3 +17,7 @@ Add calculation of block offset e.g. to enable jumping to a block.
 ## 0.3.1
 
 Fix the "no width Markdown centers text" and unstyled underline gets bold bugs.
+
+## 0.4.0
+
+Implement RTL Detection.
