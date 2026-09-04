@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tief_weave/ast/markdown_ast.dart';
+import 'package:tief_weave/text_direction/inline_text_direction_detector.dart';
+import 'package:tief_weave/text_direction/paragraph_text_direction_resolver.dart';
 
 class MarkdownRendererController extends ChangeNotifier {
   _MarkdownRendererState? _state;
@@ -24,7 +26,7 @@ class MarkdownRenderer extends StatefulWidget {
   final TextStyle? style;
   final StrutStyle? strutStyle;
   final TextAlign? textAlign;
-  final TextDirection? textDirection;
+  final TextDirectionMode? textDirectionMode;
   final Locale? locale;
   final bool? softWrap;
   final TextOverflow? overflow;
@@ -42,7 +44,7 @@ class MarkdownRenderer extends StatefulWidget {
     this.style,
     this.strutStyle,
     this.textAlign,
-    this.textDirection,
+    this.textDirectionMode,
     this.locale,
     this.softWrap,
     this.overflow,
@@ -61,11 +63,13 @@ class MarkdownRenderer extends StatefulWidget {
 
 class _MarkdownRendererState extends State<MarkdownRenderer> {
   List<GlobalKey> _blockKeys = const [];
+  late InlineTextDirectionDetector _directionDetector;
 
   @override
   void initState() {
     super.initState();
     widget.controller?._attach(this);
+    _rebuildDirectionDetector();
     _syncBlockKeys();
     _scheduleLayoutNotification();
   }
@@ -77,6 +81,9 @@ class _MarkdownRendererState extends State<MarkdownRenderer> {
       oldWidget.controller?._detach(this);
       widget.controller?._attach(this);
     }
+    if (oldWidget.textDirectionMode != widget.textDirectionMode) {
+      _rebuildDirectionDetector();
+    }
     _syncBlockKeys();
     _scheduleLayoutNotification();
   }
@@ -85,6 +92,14 @@ class _MarkdownRendererState extends State<MarkdownRenderer> {
   void dispose() {
     widget.controller?._detach(this);
     super.dispose();
+  }
+
+  void _rebuildDirectionDetector() {
+    _directionDetector = InlineTextDirectionDetector(
+      ParagraphTextDirectionResolver(
+        mode: widget.textDirectionMode ?? TextDirectionMode.auto,
+      ),
+    );
   }
 
   void _syncBlockKeys() {
@@ -170,6 +185,8 @@ class _MarkdownRendererState extends State<MarkdownRenderer> {
     TextScaler? scaler,
     TextStyle? overrideStyle,
   }) {
+    final textDirection = _directionDetector.detect(inlines);
+
     return SizedBox(
       width: widget.width ?? double.infinity,
       child: Text.rich(
@@ -179,7 +196,7 @@ class _MarkdownRendererState extends State<MarkdownRenderer> {
         ),
         strutStyle: widget.strutStyle,
         textAlign: widget.textAlign,
-        textDirection: widget.textDirection,
+        textDirection: textDirection,
         locale: widget.locale,
         softWrap: widget.softWrap,
         overflow: widget.overflow,
